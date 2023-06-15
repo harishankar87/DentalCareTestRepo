@@ -9,18 +9,25 @@ from django.db.models import Count, Q
 
 def index(request):
     """ Function for displaying main page of website. """
+    
     # Editing response headers so as to ignore cached versions of pages
     response = render(request,"HealthCentre/index.html")
     return responseHeadersModifier(response)
 
 def register(request):
     """ Function for registering a student into the portal. """
+
     # If the user wants the page to get displayed
+
     if request.method == "GET":
         # Editing response headers so as to ignore cached versions of pages
+
         response =  render(request,"HealthCentre/registrationPortal.html")
+
         return responseHeadersModifier(response)
+    
     # If the user wants to submit his/her information
+
     elif request.method == "POST":
         # Extracting the user information from the post request
         userFirstName = request.POST["userFirstNam"]
