@@ -9,11 +9,9 @@ from django.db.models import Count, Q
 
 def index(request):
     """ Function for displaying main page of website. """
-
     # Editing response headers so as to ignore cached versions of pages
     response = render(request,"HealthCentre/index.html")
     return responseHeadersModifier(response)
-
 
 def register(request):
     """ Function for registering a student into the portal. """
