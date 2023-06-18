@@ -1,4 +1,4 @@
-# IITJ Health Care
+# Dental Care
 --------------
 
 This folder contains the configuration information of the project.
