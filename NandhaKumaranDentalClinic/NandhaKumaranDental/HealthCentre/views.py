@@ -6,7 +6,6 @@ from .models import Doctor, Patient, Prescription, passwordHasher, emailHasher
 from django.db.models import Count, Q
 
 # Create your views here.
-
 def index(request):
     """ Function for displaying main page of website. """
     
