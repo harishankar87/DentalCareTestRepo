@@ -87,7 +87,7 @@ def doctors(request):
 
     # Storing doctors available in the context variable
     context = {
-        "doctors" : "DOCS"#Doctor.objects.all()
+        "doctors" : Doctor.objects.all()
     }
 
     # Editing response headers so as to ignore cached versions of pages
@@ -107,11 +107,11 @@ def login(request):
 
             # If the user is already logged in inside of his sessions, and is a doctor, then no authentication required
             if request.session['isLoggedIn'] and request.session['isDoctor']:
-
+                
                 # Accessing the doctor user and all his/her records
                 doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
                 records = doctor.doctorRecords.all()
-
+                
                 # Getting the count of the new prescriptions pending
                 numberNewPendingPrescriptions = doctor.doctorRecords.aggregate(newPendingPrescriptions = Count('pk', filter =( Q(isNew = True) & Q(isCompleted = False) ) ))['newPendingPrescriptions']
 
