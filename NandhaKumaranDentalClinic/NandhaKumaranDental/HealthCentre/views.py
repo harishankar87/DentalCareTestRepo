@@ -49,9 +49,29 @@ def register(request):
             # Encrypting email to store inside database
             emailHash = emailHasher(userEmail)
 
+            # handleSubmit(request)
+            # def handleSubmit(request):
+            
+            
+            # Creating a patient object and saving insdie the database if patient is selected 
+            userType = request.POST['userType']
+            if userType == 'patient':
+                # patient = Patient(rollNumber=request.POST['rollNumber'])
+                patient = Patient(name = name,rollNumber = userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash )
+                patient.save()
+                    
+            # Creating a patient object and saving insdie the database if patient is selected
+            elif userType == 'doctor':
+                doctor = Doctor(name = name, specialization= userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash)
+                doctor.save()
+
+
+            
+            
+
             # Creating a patient object and saving insdie the database
-            patient = Patient(name = name,rollNumber = userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash )
-            patient.save()
+            # patient = Patient(name = name,rollNumber = userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash )
+            # patient.save()
 
             # Storing success message in the context variable
             context = {
@@ -86,7 +106,7 @@ def doctors(request):
 
     # Storing doctors available in the context variable
     context = {
-        "doctors" : "DOCS"#Doctor.objects.all()
+        "doctors" : Doctor.objects.all()
     }
 
     # Editing response headers so as to ignore cached versions of pages
@@ -106,11 +126,11 @@ def login(request):
 
             # If the user is already logged in inside of his sessions, and is a doctor, then no authentication required
             if request.session['isLoggedIn'] and request.session['isDoctor']:
-
+                
                 # Accessing the doctor user and all his/her records
                 doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
                 records = doctor.doctorRecords.all()
-
+                
                 # Getting the count of the new prescriptions pending
                 numberNewPendingPrescriptions = doctor.doctorRecords.aggregate(newPendingPrescriptions = Count('pk', filter =( Q(isNew = True) & Q(isCompleted = False) ) ))['newPendingPrescriptions']
 
@@ -174,8 +194,8 @@ def login(request):
     elif request.method == "POST":
 
         # Extracting the user information from the post request
-        userName = request.POST["useremail"]
-        userPassword = request.POST["userpassword"]
+        userName = request.POST["userEmail"]
+        userPassword = request.POST["userPassword"]
 
         # If such a patient exists
         try:
