@@ -19,7 +19,20 @@ NDC-Sign Up
 
 {% block body %}
 
-
+<!-- <script>
+    function handleSelection() {
+        var selection = document.getElementById("userType").addEventListener("change", handleSelection);
+        var contentDiv = document.getElementById("userRollNo");
+        // selection = selection.value;
+        if (selection.value === "patient"){
+            contentDiv.Placeholder = "Roll Number";//contentDiv.setAttribute("placeholder", "Roll Number"); // 
+        }else if (selection.value === "doctor"){
+            contentDiv.Placeholder = "License Number"; //contentDiv.setAttribute("placeholder", "License Number");
+        }else {
+            contentDiv.Placeholder = ""; //contentDiv.setAttribute("placeholder", "");
+        }
+    }
+</script> -->
         <div class="jumbotron jumbotron-fluid" style = "margin:5%;padding:5%;margin-left: 30%;margin-right: 30%; background:rgba(112, 110, 110, 0.6);padding-top:2%;padding-bottom:2%" align ="center" width="300px">
           <h1 style="text-align:center;color:rgb(3, 3, 3)" class = "display-5">
                 Register Here.
@@ -39,10 +52,12 @@ NDC-Sign Up
               <br>
           {% else %}
             <br>
+            
             <form onsubmit="return checkConfirm()"align="center" action="{% url 'register' %}" method="post">
                 {% csrf_token %}
+                
                 <label for="userType" style="color:rgb(3, 3, 3)">You are:</label>
-                <select name="userType" id="userType">
+                <select name="userType" id="userType" onchange="handleSelection()">
                     <option value="patient">Patient</option>
                     <option value="doctor">Doctor</option>
                 </select>
@@ -59,7 +74,7 @@ NDC-Sign Up
                   </div>
 
                   <br>
-
+                  
                   <div class="form-row">
 
                         <div class="col-6">
@@ -67,14 +82,34 @@ NDC-Sign Up
                         </div>
                     
                         <div class="col-6">
-                    {% if userType == Patient %}
-                            <input name="userRollNo" type="text" class="form-control" placeholder="Roll Number">
-                    {% elif userType == Doctor %}
-                            <input name="DocLicenseNumber" type="text" class="form-control" placeholder="License Number">
-                    {% endif %}
+                    <!-- {% if userType == Patient %} -->
+                            <input name="userRollNo" type="text" id="userRollNo" class="form-control" placeholder="Token Number">
+                    <!-- {% elif userType == Doctor %} -->
+                            <!-- <input name="userRollNo" type="text" class="form-control" placeholder="License Number"> -->
+                    <!-- {% endif %} -->
                         </div>   
                   </div>
-                  <br>
+
+                    <br>
+                    <script>
+                        function handleSelection() {
+                          var selection = document.getElementById("userType").value;
+                          var contentDiv = document.getElementById("userRollNo");
+                          if (selection !== "patient") {
+                            contentDiv.placeholder = "Specialization";
+                          } 
+                        //   if (selection === "patient") {
+                        //     contentDiv.placeholder = "Roll Number";
+                        //   } else if (selection === "doctor") {
+                        //     contentDiv.placeholder = "License Number";
+                        //   } else {
+                        //     contentDiv.placeholder = "";
+                        //   }
+                        }
+                        
+                        document.getElementById("userType").addEventListener("change", handleSelection);
+                        </script>
+
                   <div class="form-row">
 
                         <div class="col-6">
@@ -101,7 +136,7 @@ NDC-Sign Up
 
                   </div>
                   <br>
-                
+                  
                   <!-- <div class="form-row ">
 
                     <div class="col-6 ">

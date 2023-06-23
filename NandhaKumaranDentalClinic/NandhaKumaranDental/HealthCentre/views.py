@@ -50,9 +50,29 @@ def register(request):
             # Encrypting email to store inside database
             emailHash = emailHasher(userEmail)
 
+            # handleSubmit(request)
+            # def handleSubmit(request):
+            
+            
+            # Creating a patient object and saving insdie the database if patient is selected 
+            userType = request.POST['userType']
+            if userType == 'patient':
+                # patient = Patient(rollNumber=request.POST['rollNumber'])
+                patient = Patient(name = name,rollNumber = userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash )
+                patient.save()
+                    
+            # Creating a patient object and saving insdie the database if patient is selected
+            elif userType == 'doctor':
+                doctor = Doctor(name = name, specialization= userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash)
+                doctor.save()
+
+
+            
+            
+
             # Creating a patient object and saving insdie the database
-            patient = Patient(name = name,rollNumber = userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash )
-            patient.save()
+            # patient = Patient(name = name,rollNumber = userRollNo, email = userEmail, passwordHash = passwordHash, address = userAddress, contactNumber = userContactNo, emailHash = emailHash )
+            # patient.save()
 
             # Storing success message in the context variable
             context = {
@@ -175,8 +195,8 @@ def login(request):
     elif request.method == "POST":
 
         # Extracting the user information from the post request
-        userName = request.POST["useremail"]
-        userPassword = request.POST["userpassword"]
+        userName = request.POST["userEmail"]
+        userPassword = request.POST["userPassword"]
 
         # If such a patient exists
         try:
