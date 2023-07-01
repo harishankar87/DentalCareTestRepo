@@ -1,0 +1,109 @@
+{% extends "HealthCentre/layout.html" %}
+{% load static %}
+{% block title %}
+NDC-Prescription
+{% endblock%}
+
+{% block script %}
+    <script src="{% static 'HealthCentre/javascript/checkboxConfirm.js' %}"></script>
+{% endblock %}
+
+{% block bodytag %}
+
+    {% load static %}
+    <body background="{% static 'HealthCentre/images/plain.jpg' %}" style="background-size: auto auto;">
+
+{% endblock %}
+
+
+{% block body %}
+
+    <br>
+
+    
+
+    <li class="dropdown-divider" style="margin-left:25%;margin-right:25%;border-color:black"></li>
+
+    {% if successPrescriptionMessage %}
+        <br>
+            <div style="text-align:center;margin:0 auto;"class="alert alert-warning" role="alert">
+                {{ successPrescriptionMessage }}
+            </div>
+    {% endif %}
+
+    {% if request.session.isLoggedIn  %}
+      {% if request.session.isDoctor %}
+      <!-- <form align="left" action="{% url 'doctorprofile' %}" method="post" style="margin-right:5%"> -->
+        {% csrf_token %}
+       <li class = "button">
+        <a class="button" align = "right" type ="submit" style="color:black" href="{% url 'doctorprofile' %}">Write new prescription</a>
+    </li> 
+        <!-- <button type="submit" name="writeNewPrescription" class="btn btn-warning btn-lg" action="{% url 'doctorprofile' %}">Write new prescription</button> -->
+      
+      <br>
+      <!-- </form> -->
+      
+    <div class="container center_div"style = "background:rgba(0,0,0,0.6);padding-top:2%;padding-bottom:2%" align ="center" width="300px">
+
+        <form onsubmit="return checkConfirm()" align="center" action="{% url 'doctorprofile' %}" method="post">
+          {% csrf_token %}
+
+          <div class="form-group" >
+
+              <label  style="color:white">Please select a patient from the dropdown.</label>
+              <select name="selectedPatient" class="form-control" placeholder="Select Patient">
+                  {% for patient in patients %}
+                      <option value="{{ patient.name }}">{{ patient.name }}</option>
+                  {% endfor %}
+              </select>
+
+          </div>
+
+          <br>
+
+          <div class="form-group">
+              <label for="exampleFormControlTextarea1" style = "color:white">Please type the symptoms.</label>
+              <textarea name = "symptoms" class="form-control"  rows="5" placeholder="Symptoms"></textarea>
+          </div>
+
+          <br>
+
+          
+
+       
+        
+        <!-- </form> -->
+        <!-- <form align="left" action="{% url 'doctorprofile' %}" method="post" style="margin-right:5%">
+            {% csrf_token %} -->
+          {% if request.session.writeNewPrescription %}
+          <div class="form-group" >
+    
+            <!-- <label  style="color:white">Please select a prescription from the dropdown.</label> -->
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Please type the prescription.</label>
+                <textarea name = "prescription"style="text-align:center" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Prescription"></textarea>
+                <input type="hidden" name="prescriptionID" value="{{ prescription.id }}">
+            </div>
+            <!-- <select name="doctor" class="form-control" placeholder="Select Doctor">
+                {% for doctor in doctors %}
+                    <option value="{{ prescription.id }}">Dr. {{ doctor.id }}   ||   {{ doctor.specialization }} Specialist</option>
+                {% endfor %}
+            </select> -->
+    
+          </div>
+          <br>
+          <li class="dropdown-divider" style="margin-left:25%;margin-right:25%"></li>
+
+          <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" id="confirmCheck" >
+              <label class="form-check-label" ><span class="badge badge-success">CONFIRM</span></label>
+          </div>
+
+          <button type="submit" class="btn btn-warning">Write Prescription</button>
+          {% endif %}
+          
+        </form>
+    </div>
+      {% endif %}
+      {% endif %}
+      {% endblock %}

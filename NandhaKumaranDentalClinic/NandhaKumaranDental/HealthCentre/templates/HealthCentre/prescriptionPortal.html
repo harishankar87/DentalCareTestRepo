@@ -11,7 +11,7 @@ NDC-Prescription
 {% block bodytag %}
 
     {% load static %}
-    <body background="{% static 'HealthCentre/images/i6.jpg' %}" style="background-size: auto auto;">
+    <body background="{% static 'HealthCentre/images/plain.jpg' %}" style="background-size: auto auto;">
 
 {% endblock %}
 
@@ -20,22 +20,165 @@ NDC-Prescription
 
     <br>
 
-    <h1 style="text-align:center;color:black" class = "display-4">
-      Request Prescription.
-    </h1>
+    <h1 align = "center">your prescriptions</h1>
 
     <li class="dropdown-divider" style="margin-left:25%;margin-right:25%;border-color:black"></li>
-
+    <li class = "button">
+        <a class="button" align = "right" type ="submit" style="color:rgb(30, 126, 216)" href="{% url 'doctorprofile' %}">Write new prescription</a>
+    </li> 
     {% if successPrescriptionMessage %}
         <br>
             <div style="text-align:center;margin:0 auto;"class="alert alert-warning" role="alert">
                 {{ successPrescriptionMessage }}
             </div>
     {% endif %}
+    <br>
+
+    <style>
+        .prescription-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+      
+        .prescription-table th,
+        .prescription-table td {
+          padding: 10px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+      
+        .prescription-table th {
+          background-color: #f2f2f2;
+        }
+      
+        .prescription-table tr:hover {
+          background-color: #f5f5f5;
+        }
+
+        .prescription-details {
+          display: none;
+          background-color: #f5f5f5;
+          padding: 10px;
+        }
+    </style>
+
+    <table class = "prescription-table">
+        <thead>
+          <tr>
+            <th>  </th>
+            <th>Patient Name</th>
+            <th>Symptoms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prescription in prescriptions %}
+                
+            <tr class="prescription-row">
+              <td><button class="tree-toggle" data-prescription-id="{{ prescription.id }}"></button>
+                <div id="prescription-details-{{ prescription.id }}" class="prescription-details"></div></td>  
+              <td>{{ prescription.prescribingPatient }}</td>
+              <td>{{ prescription.symptoms }}</td>
+            </tr>
+            <tr class="prescription-details">
+                <td>Doctor Name : {{ prescription.prescribingDoctor }} </td>
+                <!-- <td>ID: {{ prescription.doctor }}</td> ID: {{ prescription.doctor }} -->
+                <td>Prescription : {{ prescription.prescriptionText }}</td>
+                <td>{{ prescription.timestamp }}</td>
+                <td>{% if prescription.isCompleted %} prescription is completed {% else %} prescription is incomplete {% endif %} </td>
+            </tr>    
+          {% endfor %}
+        </tbody>
+      </table>
+      <script>
+        // Add click event listener to each row
+        const rows = document.querySelectorAll('.prescription-row');
+      
+        rows.forEach(row => {
+          row.addEventListener('click', function() {
+            // Get the prescription details div associated with the row
+            // const detailsDiv = this.querySelector('.prescription-details');
+            const detailsRow = row.nextElementSibling;
+      
+            // Toggle the visibility of the details div
+            // detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+            detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+          });
+        });
+    </script>
+    <!-- {% for prescription in prescriptions %}
+    <button class="tree-toggle" data-prescription-id="{{ prescription.id }}"></button>
+    <div id="prescription-details-{{ prescription.id }}" class="prescription-details">
+      <p>Patient Name: {{ prescription.prescribingPatient }}</p>
+      <p>Doctor Name: {{ prescription.prescribingDoctor }}</p>
+      <p>Symptoms: {{ prescription.symptoms }}</p>
+      <p>Time: {{ prescription.timestamp }}</p>
+      
+    </div>
+  {% endfor %} -->
+
+  <!-- <script>
+    // Get all the tree-toggle buttons
+    const buttons = document.querySelectorAll('.tree-toggle');
+  
+    // Add click event listener to each button
+    buttons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Get the prescription details div associated with the button
+        const detailsDiv = document.getElementById(`prescription-details-${this.dataset.prescriptionId}`);
+  
+        // Toggle the visibility of the details div
+        if (detailsDiv.style.display === 'none') {
+          detailsDiv.style.display = 'block';
+        } else {
+          detailsDiv.style.display = 'none';
+        }
+      });
+    });
+  </script> -->
+  
+    {% if request.session.isLoggedIn  %}
+      {% if request.session.isDoctor %}
+      <!-- <form align="left" action="{% url 'doctorprofile' %}" method="post" style="margin-right:5%"> -->
+        {% csrf_token %}
+       <!-- <li class = "button">
+        <a class="button" align = "right" type ="submit" style="color:black" href="{% url 'login' %}">Write new prescription</a>
+    </li>  -->
+    
+        <!-- <button type="submit" name="writeNewPrescription" class="btn btn-warning btn-lg" action="{% url 'doctorprofile' %}">Write new prescription</button> -->
+      
+      <!-- <br> -->
+    <!-- </form> -->
+    <!-- <form align="left" action="{% url 'doctorprofile' %}" method="post" style="margin-right:5%">
+        {% csrf_token %} -->
+      <!-- {% if request.session.writeNewPrescription %}
+      <div class="form-group" >
+
+        <label  style="color:white">Please select a prescription from the dropdown.</label>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Please type the prescription.</label>
+            <textarea name = "prescription"style="text-align:center" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Prescription"></textarea>
+            <input type="hidden" name="prescriptionID" value="{{ prescription.id }}">
+        </div>
+        <select name="doctor" class="form-control" placeholder="Select Doctor">
+            {% for prescription in prescriptions %}
+                <option value="{{ prescription.id }}">Dr. {{ prescription.id }}   ||   {{ prescription.symptoms }} Specialist</option>
+            {% endfor %}
+        </select>
+
+      </div>
+      <br>
+      {% endif %} -->
+      
+    <!-- </form> -->
+      
+      {% endif %}
+      {% endif %}
 
     {% if request.session.isLoggedIn  %}
       {% if not request.session.isDoctor %}
-
+      <h1 style="text-align:center;color:black" class = "display-4">
+        Request Prescription.
+      </h1>
           <br>
           <br>
 

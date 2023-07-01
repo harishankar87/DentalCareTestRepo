@@ -26,8 +26,8 @@ NDC-Login
                 <br>
                 <form align="left" action="{% url 'login' %}" method="post" style="margin-right:5%">
                     {% csrf_token %}
-                    <label for="userType" style="color:rgb(3, 3, 3)">You are:</label>
-                    <select name="userType" id="userType">
+                    <label for="userTypeinLogin" style="color:rgb(3, 3, 3)">You are:</label>
+                    <select name="userTypeinLogin" id="userTypeinLogin">
                         <option value="patient">Patient</option>
                         <option value="doctor">Doctor</option>
                     </select>

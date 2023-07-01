@@ -2,6 +2,7 @@ from django.db import models
 from Cryptodome.Hash import SHA256
 from codecs import encode,decode
 
+
 class Doctor(models.Model):
     name = models.CharField(max_length = 30)
     address = models.CharField(max_length = 100)
@@ -28,6 +29,8 @@ class Patient(models.Model):
 
 class Prescription(models.Model):
     prescriptionText = models.CharField(max_length = 2000, default = "")
+    prescribingDoctor = models.CharField(max_length= 2000, default= "")
+    prescribingPatient = models.CharField(max_length= 2000, default= "")
     doctor = models.ForeignKey(Doctor, related_name = "doctorRecords", on_delete = models.CASCADE)
     patient = models.ForeignKey(Patient, related_name = "patientRecords", on_delete = models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add = True)
