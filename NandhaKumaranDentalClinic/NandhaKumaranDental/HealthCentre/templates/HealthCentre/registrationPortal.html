@@ -83,7 +83,7 @@ NDC-Sign Up
                     
                         <div class="col-6">
                     <!-- {% if userType == Patient %} -->
-                            <input name="userRollNo" type="text" id="userRollNo" class="form-control" placeholder="Token Number">
+                            <input name="userRollNo" type="text" id="userRollNo" class="form-control" placeholder="PatientID">
                     <!-- {% elif userType == Doctor %} -->
                             <!-- <input name="userRollNo" type="text" class="form-control" placeholder="License Number"> -->
                     <!-- {% endif %} -->
@@ -97,7 +97,9 @@ NDC-Sign Up
                           var contentDiv = document.getElementById("userRollNo");
                           if (selection !== "patient") {
                             contentDiv.placeholder = "Specialization";
-                          } 
+                          } else {
+                            contentDiv.placeholder = "PatientID";
+                          }
                         //   if (selection === "patient") {
                         //     contentDiv.placeholder = "Roll Number";
                         //   } else if (selection === "doctor") {

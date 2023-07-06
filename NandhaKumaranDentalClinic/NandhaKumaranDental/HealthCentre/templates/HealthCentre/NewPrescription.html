@@ -52,15 +52,23 @@ NDC-Prescription
 
               <label  style="color:white">Please select a patient from the dropdown.</label>
               <select name="selectedPatient" class="form-control" placeholder="Select Patient">
+                <option value = "">select patient</option>
                   {% for patient in patients %}
                       <option value="{{ patient.name }}">{{ patient.name }}</option>
+                  {% endfor %}
+                  {% for prescription in prescPatients %}
+                  <option value="{{ prescription.prescribingPatient }}">{{ prescription.prescribingPatient }}</option>
                   {% endfor %}
               </select>
 
           </div>
 
           <br>
-
+          <label  style="color:white">or enter patient name</label>
+          <div class="col-6 ">
+            <input name="PatientName"type="text" class="form-control" placeholder="Enter Patient Name">
+        </div>
+        <br>
           <div class="form-group">
               <label for="exampleFormControlTextarea1" style = "color:white">Please type the symptoms.</label>
               <textarea name = "symptoms" class="form-control"  rows="5" placeholder="Symptoms"></textarea>

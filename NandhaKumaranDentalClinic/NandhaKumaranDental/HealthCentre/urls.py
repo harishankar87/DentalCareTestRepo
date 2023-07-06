@@ -11,5 +11,7 @@ urlpatterns = [
     path('logout', views.logout, name = "logout"),
     path('contactus', views.contactus, name = "contactus"),
     path('onlineprescription', views.onlineprescription, name = "onlineprescription"),
-    path('doctorprofile', views.doctorprofile, name = "doctorprofile")
+    path('doctorprofile', views.doctorprofile, name = "doctorprofile"),
+    path('doctorappointments', views.doctorappointments, name = "doctorappointments"),
+    path('doctorappointmentsfalse', views.doctorappointmentsfalse, name = "doctorappointmentsfalse")
 ]
