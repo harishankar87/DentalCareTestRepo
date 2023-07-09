@@ -7,7 +7,7 @@ NDC-Doctors
 {% block bodytag %}
 
     {% load static %}
-    <body background="{% static 'HealthCentre/images/i6.jpg' %}" style="background-size: auto auto;">
+    <body background="{% static 'HealthCentre/images/plain.jpg' %}" style="background-size: auto auto;">
 
 {% endblock %}
 
@@ -25,17 +25,21 @@ NDC-Doctors
     <br>
     <br>
     <br>
-
-    {% if successPrescriptionMessage %}
+    <!-- <li class = "nav-item">
+        <a class="nav-link" align = "right" style="color:black" href="{% url 'onlineprescription' %}">Write new prescription</a>
+    </li> -->
+    <!-- {% if successPrescriptionMessage %}
         <div style="text-align:center;margin:0 auto;"class="alert alert-warning" role="alert">
             {{ successPrescriptionMessage }}
         </div>
-    {% endif %}
+    {% endif %} -->
 
     <br>
 
-    {% for prescription in user %}
-        {% if not prescription.isCompleted %}
+    <!-- {% for prescription in user %} -->
+        <!-- {% if not prescription.isCompleted %} -->
+    {% if request.session.isLoggedIn %}
+    {% if request.session.isDoctor %}
             <form action="{% url 'onlineprescription' %}" method = "post">
                 {% csrf_token %}
                 <div class="card text-center" style = "margin-left:5%;margin-right:5%;">
@@ -74,7 +78,7 @@ NDC-Doctors
                             <label class="form-check-label" for="exampleCheck1"><span class="badge badge-success">CONFIRM</span></label>
                         </div>
 
-                        <button type="submit" class="btn btn-warning" style = "margin-left:10%;margin-right:10%"">Submit Patient Prescription</button><br>
+                        <button type="submit" class="btn btn-warning" style = "margin-left:10%;margin-right:10%">Submit Patient Prescription</button><br>
 
                         <li class="dropdown-divider" style="margin-left:25%;margin-right:25%"></li>
 
@@ -93,7 +97,8 @@ NDC-Doctors
 
           <br>
 
-        {% else %}
+        {% endif %}
+        {% endif %}
           <div class="card text-center" style = "margin-left:5%;margin-right:5%;">
 
               <div class="card-header">
@@ -102,7 +107,7 @@ NDC-Doctors
 
               <div class="card-body">
                   <h1 class="card-title" > {{ prescription.patient.name }} </h1>
-                  <p class="card-text lead" style=""><br>{{ prescription.prescriptionText }}<br><br> <span><h3>Patient's Symptoms</h3></span> {{ prescription.symptoms }}</p>
+                  <p class="card-text lead" style="margin-top:1%"><br>{{ prescription.prescriptionText }}<br><br> <span><h3>Patient's Symptoms</h3></span> {{ prescription.symptoms }}</p>
                   <a href="#" class="btn btn-primary"style = "margin-top:1%">Contact Number : {{ prescription.patient.contactNumber }}</a>
                   <a href="#" class="btn btn-primary"style = "margin-top:1%">Email : {{ prescription.patient.email }}</a>
                   <a href="#" class="btn btn-primary"style = "margin-top:1%">Address : {{ prescription.patient.address }}</a>
@@ -115,15 +120,15 @@ NDC-Doctors
           </div>
 
           <br>
-        {% endif %}
+        <!-- {% endif %} -->
 
-    {% empty %}
+    <!-- {% empty %} -->
 
-        <h1 style="text-align:center;color:white" >
+        <!-- <h1 style="text-align:center;color:white" >
             You have no prescriptions right now.
-        </h1>
+        </h1> -->
 
-    {% endfor %}
+    <!-- {% endfor %} -->
 
     <br>
     <br>

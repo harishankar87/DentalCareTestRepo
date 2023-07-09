@@ -1,0 +1,101 @@
+{% extends "HealthCentre/layout.html" %}
+{% load static %}
+{% block title %}
+NDC-Prescription
+{% endblock%}
+
+{% block script %}
+    <script src="{% static 'HealthCentre/javascript/checkboxConfirm.js' %}"></script>
+{% endblock %}
+
+{% block bodytag %}
+
+    {% load static %}
+    <body background="{% static 'HealthCentre/images/plain.jpg' %}" style="background-size: auto auto;">
+
+{% endblock %}
+
+
+{% block body %}
+
+{% if request.session.isLoggedIn  %}
+      {% if request.session.isDoctor %}
+      <!-- <form align="left" action="{% url 'doctorprofile' %}" method="post" style="margin-right:5%"> -->
+        
+       <li class = "button">
+            <a class="button" align = "right" type ="submit" style="color:black" href="{% url 'doctorappointments' %}">Create new appointment</a>
+       </li> 
+        <!-- <button type="submit" name="writeNewPrescription" class="btn btn-warning btn-lg" action="{% url 'doctorprofile' %}">Write new prescription</button> -->
+      
+      <br>
+      {% endif %}
+      {% endif %}
+      <form action="{% url 'doctorappointments' %}" method="post" align="center">
+        {% csrf_token %}
+
+        <div class="form-group" >
+
+            <label  style="color:white">Please select a patient from the dropdown.</label>
+            <select name="selectedPatient" class="form-control" placeholder="Select Patient">
+              <option value = "">select patient</option>
+                {% for patient in patients %}
+                    <option value="{{ patient.name }}">{{ patient.name }}</option>
+                {% endfor %}
+                {% for prescription in prescPatients %}
+                <option value="{{ prescription.prescribingPatient }}">{{ prescription.prescribingPatient }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+        <label  style="color:white">Enter patient name</label>
+          <div class="col-6 ">
+                <input name="PatientNameForAppointment"type="text" class="form-control" placeholder="Enter Patient Name">
+          </div>
+        <br>
+    <div class = "form-group">
+      
+      <label for="EnterTimeHour" style="color:rgb(3, 3, 3)">  Time(HH:MM)-</label>
+      <select name="EnterTimeHour" id="EnterTimeHour" class = "form-group">
+        {% for hour in hours %}
+          <option value="{{ hour }}">{{ hour }}</option>
+          {% endfor %}
+      </select>
+        
+        <label for="EnterTimeMinute" style="color:rgb(3, 3, 3)">:</label>
+        <select name="EnterTimeMinute" id="EnterTimeMinute" class = "form-group">
+            {% for minute in minutes %}
+            <option value="{{ minute }}">{{ minute }}</option>
+            {% endfor %}
+        </select>
+        <div class="form-group">
+        <label for="EnterDate" style="color:rgb(3, 3, 3)">  Date(DD-MM):</label>
+      <select name="EnterDate" id="EnterDate" class = "form-group">
+        {% for date in dates %}
+          <option value="{{ date }}">{{ date }}</option>
+          {% endfor %}
+      </select>
+      <label for="EnterTimeMinute" style="color:rgb(3, 3, 3)">-</label>
+      <select name="EnterDateMonth" id="EnterDateMonth" class = "form-group">
+        {% for month in months %}
+          <option value="{{ month }}">{{ month }}</option>
+          {% endfor %}
+      </select>
+
+      <label for="EnterYear" style="color:rgb(3, 3, 3)">-{{ years }}</label>
+    </div>
+      
+    </div>
+    <!-- <time id="current-time" datetime="00:00:00">Time 00:00</time> -->
+        
+          <div class="form-group">
+              <!-- <label for="exampleFormControlTextarea1" style = "color:white">Please type the symptoms.</label> -->
+              <textarea name = "AppointmentDescription" class="form-control"  rows="5" placeholder="Appointment Description"></textarea>
+          </div>
+        <br>
+            <!-- <input type="text" name="time" placeholder="Enter time"> -->
+            <input type="submit" value="Submit">
+            
+          </form>
+          <br>
+
+{% endblock %}

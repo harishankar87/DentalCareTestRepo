@@ -1,6 +1,7 @@
 from django.db import models
 from Cryptodome.Hash import SHA256
 from codecs import encode,decode
+from django.utils import timezone
 
 class Doctor(models.Model):
     name = models.CharField(max_length = 30)
@@ -28,6 +29,8 @@ class Patient(models.Model):
 
 class Prescription(models.Model):
     prescriptionText = models.CharField(max_length = 2000, default = "")
+    prescribingDoctor = models.CharField(max_length= 2000, default= "")
+    prescribingPatient = models.CharField(max_length= 2000, default= "")
     doctor = models.ForeignKey(Doctor, related_name = "doctorRecords", on_delete = models.CASCADE)
     patient = models.ForeignKey(Patient, related_name = "patientRecords", on_delete = models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add = True)
@@ -38,7 +41,17 @@ class Prescription(models.Model):
     def __str__(self):
         return "\nDoctor :" + str(self.doctor) + "\n\nPatient :" + str(self.patient) + "\n\nPrescription : \n\n" + self.prescriptionText + "\n\n"
 
+class Appointment(models.Model):
+    time = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
+    subject = models.CharField(max_length=2000)
+    notes = models.TextField()
+    appointmentpatient = models.CharField(max_length=2000, default = "")
+    appointmentdoctor  = models.CharField(max_length=2000, default= "")
 
+    def __str__(self):
+        return "\nDoctor :" + str(self.appointmentdoctor) + "\n\nPatient" + str(self.appointmentpatient) +"\n\nDate :"+ str(self.date) + "\n\nTime :" + str(self.time) + "\n\nSubject :" + str(self.subject) + "\n\nnotes :" + str(self.notes)
+    
 def passwordHasher(userPassword):
     """Function to return the hash of the password using SHA-256. Input is the password of the user in string."""
     userPassword = userPassword

@@ -1,10 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Doctor, Patient, Prescription, passwordHasher, emailHasher
+from .models import Doctor, Patient, Prescription, passwordHasher, emailHasher, Appointment
 from django.db.models import Count, Q
-
+from django.contrib.auth.decorators import login_required
+from .forms import AppointmentSet, AppointmentSetForm
+from datetime import datetime
+from django.utils import timezone
 # Create your views here.
 def index(request):
     """ Function for displaying main page of website. """
@@ -126,14 +129,11 @@ def login(request):
 
             # If the user is already logged in inside of his sessions, and is a doctor, then no authentication required
             if request.session['isLoggedIn'] and request.session['isDoctor']:
-                
                 # Accessing the doctor user and all his/her records
                 doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
                 records = doctor.doctorRecords.all()
-                
                 # Getting the count of the new prescriptions pending
-                numberNewPendingPrescriptions = doctor.doctorRecords.aggregate(newPendingPrescriptions = Count('pk', filter =( Q(isNew = True) & Q(isCompleted = False) ) ))['newPendingPrescriptions']
-
+                numberNewPendingPrescriptions = doctor.doctorRecords.aggregate(newnewPendingPrescriptions = Count('pk', filter =( Q(isNew = True) & Q(isCompleted = False) ) ))['newnewPendingPrescriptions']
                 # Storing the same inside the session variables
                 request.session['numberNewPrescriptions'] = numberNewPendingPrescriptions
 
@@ -141,13 +141,14 @@ def login(request):
                 context = {
                     "message" : "Successfully Logged In.",
                     "isAuthenticated" : True,
-                    "user": records.order_by('-timestamp')
+                    "user": records.order_by('-timestamp'),
+                    "prescriptions" : Prescription.objects.all().order_by('timestamp')
                 }
-
+                
                 # Editing response headers so as to ignore cached versions of pages
-                response = render(request,"HealthCentre/userDoctorProfilePortal.html", context)
+                response = render(request,"HealthCentre/prescriptionPortal.html", context)
                 return responseHeadersModifier(response)
-
+            
             # If the user is already logged in inside of his sessions, and is a patient, then no authentication required
             elif request.session['isLoggedIn'] and (not request.session['isDoctor']):
 
@@ -175,6 +176,7 @@ def login(request):
                     }
 
                 # Editing response headers so as to ignore cached versions of pages
+                # response = render(request,"HealthCentre/prescriptionPortal.html")
                 response = render(request,"HealthCentre/userPatientProfilePortal.html", context)
                 return responseHeadersModifier(response)
 
@@ -194,8 +196,8 @@ def login(request):
     elif request.method == "POST":
 
         # Extracting the user information from the post request
-        userName = request.POST["userEmail"]
-        userPassword = request.POST["userPassword"]
+        userName = request.POST["useremail"]
+        userPassword = request.POST["userpassword"]
 
         # If such a patient exists
         try:
@@ -210,7 +212,7 @@ def login(request):
                 doctor = Doctor.objects.get(email = userName)
 
                 # Storing required session information
-                request.session['isDoctor'] = True
+                request.session['isDoctor'] = True     
 
             # If no such doctor or patient exists
             except Doctor.DoesNotExist:
@@ -229,7 +231,7 @@ def login(request):
 
         # If the logged in user is a doctor
         if request.session['isDoctor']:
-
+            
             # Accessing all records of doctor
             records = doctor.doctorRecords.all()
 
@@ -250,6 +252,9 @@ def login(request):
                 # Redirecting to avoid form resubmission
                 # Redirecting to home page
                 # Editing response headers so as to ignore cached versions of pages
+                # response = render(request,"HealthCentre/userDoctorProfilePortal.html")
+                # response = HttpResponseRedirect(reverse('onlineprescription'))
+                # response = render(request,"HealthCentre/prescriptionPortal.html")
                 response = HttpResponseRedirect(reverse('index'))
                 return responseHeadersModifier(response)
 
@@ -295,6 +300,9 @@ def login(request):
                 # Redirecting to avoid form resubmission
                 # Redirecting to home page
                 # Editing response headers so as to ignore cached versions of pages
+                # response = render(request,"HealthCentre/userPatientProfilePortal.html")
+                # response = render(request, "HealthCentre/prescriptionportal.html")
+                # response = HttpResponseRedirect(reverse('onlineprescription'))
                 response = HttpResponseRedirect(reverse('index'))
                 return responseHeadersModifier(response)
 
@@ -389,6 +397,120 @@ def contactus(request):
     response = render(request, "HealthCentre/contactus.html")
     return responseHeadersModifier(response)
 
+
+def doctorappointmentsfalse(request):
+    if request.method == 'GET':
+        # request.session['goToAppointmentsPage'] = True
+        request.session['createNewAppointment'] = True
+        if request.session['isLoggedIn'] and request.session['isDoctor'] and request.session['createNewAppointment']:
+            # Accessing the doctor user and all his/her records
+            # request.session['CreatenewAppointment'] = False
+            doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
+            records = doctor.doctorRecords.all()
+            # Getting the count of the new prescriptions pending
+            numberNewPendingPrescriptions = doctor.doctorRecords.aggregate(newnewPendingPrescriptions = Count('pk', filter =( Q(isNew = True) & Q(isCompleted = False) ) ))['newnewPendingPrescriptions']
+
+            # Storing the same inside the session variables
+            request.session['numberNewPrescriptions'] = numberNewPendingPrescriptions
+
+            # Storing the required information inside the context variable
+            context = {
+                "message" : "Successfully Logged In.",
+                "isAuthenticated" : True,
+                "user": records.order_by('-timestamp'),
+                "Appointments" : Appointment.objects.all().order_by('time')
+            }
+            response = render(request,"HealthCentre/appointmentsPortal.html", context)
+            return responseHeadersModifier(response)
+        
+def doctorappointments(request):
+    if request.method == 'GET':
+        request.session['goToAppointmentsPage'] = True
+        # request.session['createNewAppointment'] = True
+        form = AppointmentSetForm()
+        model = Appointment()
+        # form = AppointmentForm(request.POST or None)
+        hour = range(00, 24)
+        minute = range(00, 60)
+        date = range(1, 32)
+        month = range(1, 13)
+        year = datetime.now().year
+        
+        context = {'form': form, 
+                    'model': model,
+                    'hours': hour,
+                    'dates' : date,
+                    'months' : month,
+                    'years' : year,
+                    'minutes': minute,
+                    "patients" : Patient.objects.all().order_by('id'),
+                    "prescPatients" : Prescription.objects.all().order_by('id')
+                    }
+        response = render(request, 'HealthCentre/NewAppointment.html', context)
+        return responseHeadersModifier(response)
+    if request.method == 'POST':
+        if request.session['goToAppointmentsPage']:
+            if request.POST['selectedPatient'] == "":
+                appointmentPatient = request.POST['PatientNameForAppointment']
+                # patient = Patient.objects.create(name=prescpatient)
+            else:
+                appointmentPatient = request.POST['selectedPatient']
+                # prescpatient = request.POST['selectedPatient']
+                # patient_id = request.POST['selectedPatient'] 
+                # patient = Patient.objects.get(name=patient_id)
+            appointmentTime = request.POST['EnterTimeHour'] + request.POST['EnterTimeMinute']
+            datetimeObject = datetime.strptime(appointmentTime, "%H%M")
+            appointmentDate = request.POST['EnterDate'] + request.POST['EnterDateMonth']
+            dateobject = datetime.strptime(appointmentDate, "%m%d")
+            appointmentNotes = request.POST['AppointmentDescription']
+            appointmentDoctor = request.session['Name']
+            appointmentSubject = "subject"
+            appointment = Appointment(time = datetimeObject, date = dateobject, subject = appointmentSubject, notes = appointmentNotes,
+                                        appointmentpatient = appointmentPatient, appointmentdoctor = appointmentDoctor)
+            appointment.save()
+        response = render(request, 'HealthCentre/appointmentsPortal.html')
+        return responseHeadersModifier(response)
+     
+def doctorprofile(request):
+     if request.method == 'GET':
+        
+        request.session['writeNewPrescription'] = True
+        
+        context = {
+                    "patients" : Patient.objects.all().order_by('id'),
+                    "prescPatients" : Prescription.objects.all().order_by('id')
+                    
+                    }
+        response = render(request, "HealthCentre/NewPrescription.html", context)
+        return responseHeadersModifier(response)
+
+     if request.method == 'POST':
+         if request.session['writeNewPrescription']:
+            if request.POST['selectedPatient'] == "":
+                prescpatient = request.POST['PatientName']
+                patient = Patient.objects.create(name=prescpatient)
+            else:
+                prescpatient = request.POST['selectedPatient']
+                patient_id = request.POST['selectedPatient'] 
+                patient = Patient.objects.get(name=patient_id)
+
+            symptoms = request.POST["symptoms"]
+            if request.session['isLoggedIn'] and request.session['isDoctor']:
+                prescdoctor = request.session['Name']
+                # doctor = Doctor.objects.get(id=1)
+                doctor_id = request.session['Name']
+                doctor = Doctor.objects.get(name=doctor_id)
+                # patient_id = request.POST['selectedPatient'] 
+                # patient = Patient.objects.get(name=patient_id)
+                prescriptiontext = request.POST['prescription']
+                prescription = Prescription(prescribingDoctor = prescdoctor, prescribingPatient = prescpatient ,doctor = doctor, patient= patient, symptoms = symptoms, prescriptionText = prescriptiontext)
+                prescription.save()
+            context = {
+                    "prescriptions" : Prescription.objects.all().order_by('timestamp')
+                }
+         response = render(request, "HealthCentre/prescriptionportal.html", context)
+         return responseHeadersModifier(response)
+
 def onlineprescription(request):
     """Function to submit online prescription request to doctor."""
 
@@ -405,12 +527,13 @@ def onlineprescription(request):
             if request.session['isDoctor']:
 
                 # Storing message inside context variable
-                context = {
-                        "message":"Only for patients."
-                }
+                # context = {
+                #         "message":"Only for patients."
+                # }
 
                 # Editing response headers so as to ignore cached versions of pages
-                response = render(request, "HealthCentre/prescriptionPortal.html", context)
+                # response = render(request, "HealthCentre/prescriptionPortal.html", context)
+                response = render(request, "HealthCentre/userDoctorProfilePortal.html")
                 return responseHeadersModifier(response)
 
             # If the user is a patient
@@ -487,6 +610,7 @@ def onlineprescription(request):
                 }
 
                 # Editing response headers so as to ignore cached versions of pages
+                # response = render(request, "HealthCentre/userDoctorProfilePortal.html", context)
                 response = render(request, "HealthCentre/prescriptionPortal.html", context)
                 return responseHeadersModifier(response)
 
@@ -522,7 +646,7 @@ def requestSessionInitializedChecker(request):
     # Try except for KeyError
     try:
         # Checking if session variables exist
-        if request.session['isDoctor'] and request.session['isLoggedIn'] and request.session['userEmail'] and request.session['Name'] and request.session['numberNewPrescriptions']:
+        if request.session['goToAppointmentsPage'] and request.session['CreatenewAppointment'] and request.session['isDoctor'] and request.session['isLoggedIn'] and request.session['userEmail'] and request.session['Name'] and request.session['numberNewPrescriptions'] and request.session['writeNewPrescription']:
             # Do nothing if they do exist
             pass
     except:
@@ -532,6 +656,9 @@ def requestSessionInitializedChecker(request):
         request.session['userEmail'] = ""
         request.session['Name'] = ""
         request.session['numberNewPrescriptions'] = ""
-
+        request.session['writeNewPrescription'] = False
+        request.session['CreatenewAppointment'] = False
+        request.session['goToAppointmentsPage'] = False
+ 
     # Returning request
     return request

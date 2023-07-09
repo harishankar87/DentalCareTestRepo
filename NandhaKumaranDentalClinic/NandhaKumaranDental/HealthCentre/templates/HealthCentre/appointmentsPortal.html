@@ -20,11 +20,11 @@ NDC-Prescription
 
     <br>
     
-    <h1 align = "center">your prescriptions</h1>
+    <h1 align = "center">your appointments</h1>
 
     <li class="dropdown-divider" style="margin-left:25%;margin-right:25%;border-color:black"></li>
     <li class = "button">
-        <a class="button" align = "right" type ="submit" style="color:rgb(30, 126, 216)" href="{% url 'doctorprofile' %}">Write new prescription</a>
+        <a class="button" align = "right" type ="submit" style="color:rgb(30, 126, 216)" href="{% url 'doctorappointments' %}">Create new appointment</a>
     </li> 
     {% if successPrescriptionMessage %}
         <br>
@@ -67,23 +67,23 @@ NDC-Prescription
           <tr>
             <th>  </th>
             <th>Patient Name</th>
-            <th>Symptoms</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
-          {% for prescription in prescriptions %}    
+          {% for appointment in Appointments %}    
             <tr class="prescription-row">
                 <td><button class="tree-toggle" data-prescription-id="{{ prescription.id }}">Edit</button></td>
                 <!-- <div id="prescription-details-{{ prescription.id }}" class="prescription-details"></div>   -->
-              <td>{{ prescription.prescribingPatient }}</td>
-              <td>{{ prescription.symptoms }}</td>
+              <td>{{ appointment.appointmentpatient }}</td>
+              <td>{{ appointment.date }}</td>
             </tr>
             <tr class="prescription-details">
-                <td>Doctor Name : {{ prescription.prescribingDoctor }} </td>
+                <td>Doctor Name : {{ appointment.appointmentdoctor }} </td>
                 <!-- <td>ID: {{ prescription.doctor }}</td> ID: {{ prescription.doctor }} -->
-                <td>Prescription : {{ prescription.prescriptionText }}</td>
-                <td>{{ prescription.timestamp }}</td>
-                <td>{% if prescription.isCompleted %} prescription is completed {% else %} prescription is incomplete {% endif %} </td>
+                <td>Prescription : {{ appointment.subject }}</td>
+                <td>{{ appointment.time }}</td>
+                <!-- <td>{% if prescription.isCompleted %} prescription is completed {% else %} prescription is incomplete {% endif %} </td> -->
             </tr>    
           {% endfor %}
         </tbody>
@@ -163,3 +163,11 @@ NDC-Prescription
     {% endif %}
 
 {% endblock %}
+
+
+
+
+
+
+
+
