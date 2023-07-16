@@ -797,7 +797,7 @@ def whatsappNotification():
 
     whatsappApi("+917904427507")
 
-whatsappNotification()
+# whatsappNotification()
     # return whatsappNotification()
 
 
