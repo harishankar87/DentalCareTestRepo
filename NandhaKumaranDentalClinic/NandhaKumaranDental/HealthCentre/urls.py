@@ -13,5 +13,8 @@ urlpatterns = [
     path('onlineprescription', views.onlineprescription, name = "onlineprescription"),
     path('doctorprofile', views.doctorprofile, name = "doctorprofile"),
     path('doctorappointments', views.doctorappointments, name = "doctorappointments"),
-    path('doctorappointmentsfalse', views.doctorappointmentsfalse, name = "doctorappointmentsfalse")
+    path('doctorappointmentsfalse', views.doctorappointmentsfalse, name = "doctorappointmentsfalse"),
+    path('editAppointments/<pk>', views.editAppointments, name = 'editAppointments'),
+    path('deleteappointment/<pk>', views.deleteappointment, name = 'deleteappointment')
+    # path('editAppointments', views.editAppointments, name = 'editAppointments')
 ]

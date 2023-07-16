@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Doctor, Patient, Prescription, passwordHasher, emailHasher, Appointment
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
-from .forms import AppointmentSet, AppointmentSetForm
-from datetime import datetime
+from .forms import AppointmentSet, AppointmentSetForm, AppointmentForm
+from datetime import datetime, time
+import datetime as dt
 from django.utils import timezone
 # Create your views here.
 
@@ -384,6 +385,8 @@ def logout(request):
     request.session['userEmail'] = ""
     request.session['Name'] = ""
     request.session['numberNewPrescriptions'] = ""
+    request.session['writeNewPrescription'] = False
+    request.session['createNewAppointment'] = False
 
     # Redirecting to avoid form resubmission
     # Redirecting to home page
@@ -419,7 +422,7 @@ def doctorappointmentsfalse(request):
                 "message" : "Successfully Logged In.",
                 "isAuthenticated" : True,
                 "user": records.order_by('-timestamp'),
-                "Appointments" : Appointment.objects.all().order_by('time')
+                "Appointments" : Appointment.objects.all().order_by('-date')
             }
             response = render(request,"HealthCentre/appointmentsPortal.html", context)
             return responseHeadersModifier(response)
@@ -427,15 +430,16 @@ def doctorappointmentsfalse(request):
 def doctorappointments(request):
     if request.method == 'GET':
         request.session['goToAppointmentsPage'] = True
+        request.session['appointmentEdit'] = False
         # request.session['createNewAppointment'] = True
-        form = AppointmentSetForm()
-        model = Appointment()
+        form = AppointmentForm()
+        model = AppointmentForm()
         # form = AppointmentForm(request.POST or None)
         hour = range(00, 24)
         minute = range(00, 60)
         date = range(1, 32)
         month = range(1, 13)
-        year = datetime.now().year
+        year = range(int(datetime.now().year), 2099)
         
         context = {'form': form, 
                     'model': model,
@@ -445,7 +449,7 @@ def doctorappointments(request):
                     'years' : year,
                     'minutes': minute,
                     "patients" : Patient.objects.all().order_by('id'),
-                    "prescPatients" : Prescription.objects.all().order_by('id')
+                    "prescPatients" : Appointment.objects.all().order_by('id')
                     }
         response = render(request, 'HealthCentre/NewAppointment.html', context)
         return responseHeadersModifier(response)
@@ -461,17 +465,131 @@ def doctorappointments(request):
                 # patient = Patient.objects.get(name=patient_id)
             appointmentTime = request.POST['EnterTimeHour'] + request.POST['EnterTimeMinute']
             datetimeObject = datetime.strptime(appointmentTime, "%H%M")
-            appointmentDate = request.POST['EnterDate'] + request.POST['EnterDateMonth']
-            dateobject = datetime.strptime(appointmentDate, "%m%d")
+            appointmentDate = request.POST['EnterDate'] + request.POST['EnterDateMonth'] + request.POST['EnterYear']
+            dateobject = datetime.strptime(appointmentDate, "%d%m%Y")
             appointmentNotes = request.POST['AppointmentDescription']
             appointmentDoctor = request.session['Name']
             appointmentSubject = "subject"
             appointment = Appointment(time = datetimeObject, date = dateobject, subject = appointmentSubject, notes = appointmentNotes,
                                         appointmentpatient = appointmentPatient, appointmentdoctor = appointmentDoctor)
             appointment.save()
-        response = render(request, 'HealthCentre/appointmentsPortal.html')
+            doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
+            records = doctor.doctorRecords.all()
+            context = {
+            "message" : "Successfully Logged In.",
+            "isAuthenticated" : True,
+            "user": records.order_by('-timestamp'),
+            "Appointments" : Appointment.objects.all().order_by('-date')
+        }
+        response = render(request, 'HealthCentre/appointmentsPortal.html', context)
         return responseHeadersModifier(response)
-     
+
+def editAppointments(request, pk):
+    request.session['appointmentEdit'] = True
+    # record = get_object_or_404(Appointment, pk = record_id)
+    appointment = Appointment.objects.get(id=pk)
+    form = AppointmentForm(instance=appointment)
+    if request.method == "POST":
+        # form = AppointmentForm(request.POST, instance=appointment)
+        # if form.is_valid():
+            # form.save()
+        doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
+        records = doctor.doctorRecords.all()
+        appointObject = Appointment.objects.get(id=pk)
+        if request.POST['selectedPatient'] == "":
+            appointObject.appointmentpatient = request.POST['PatientNameForAppointment']
+            # patient = Patient.objects.create(name=prescpatient)
+        else:
+            appointObject.appointmentpatient = request.POST['selectedPatient']
+            # prescpatient = request.POST['selectedPatient']
+            # patient_id = request.POST['selectedPatient'] 
+            # patient = Patient.objects.get(name=patient_id)
+        
+        appointmentTime = request.POST['EnterTimeHour'] + request.POST['EnterTimeMinute']
+        appointmentTime = datetime.strptime(appointmentTime, "%H%M")
+        appointObject.time = appointmentTime
+        appointmentDate = request.POST['EnterDate'] + request.POST['EnterDateMonth'] + request.POST['EnterYear']
+        appointmentDate = datetime.strptime(appointmentDate, "%d%m%Y")
+        appointObject.date = appointmentDate
+        appointObject.notes = request.POST['AppointmentDescription']
+        appointObject.appointmentdoctor = request.session['Name']
+        appointObject.subject = "subject"
+        appointObject.save()
+        # appointment = Appointment(time = datetimeObject, date = dateobject, subject = appointmentSubject, notes = appointmentNotes,
+        #                             appointmentpatient = appointmentPatient, appointmentdoctor = appointmentDoctor)
+        # appointment.save()
+        doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
+        records = doctor.doctorRecords.all()
+        context = {
+        "message" : "Successfully Logged In.",
+        "isAuthenticated" : True,
+        "user": records.order_by('-timestamp'),
+        "Appointments" : Appointment.objects.all().order_by('-date')
+    }
+        response = render(request, 'HealthCentre/appointmentsPortal.html', context)
+        return responseHeadersModifier(response)
+        
+    # hour = Appointment.objects.get()
+    # hour = Appointment.objects.get(time=time)
+    hour = range(0, 24)
+    minute = range(0, 60)
+    date = range(1, 32)
+    month = range(1, 13)
+    year = range(int(datetime.now().year), 2099)
+    appointmentObject = Appointment.objects.get(id=pk)
+    patient = appointmentObject.appointmentpatient
+    datobject = appointmentObject.date
+    dateobject = datetime.strftime(datobject, "%d")
+    # monthobject = appointmentObject.date
+    monthobject = datetime.strftime(datobject, "%m")
+    # yearobject = appointmentObject.date
+    yearobject = datetime.strftime(datobject, "%Y")
+    timeobject = datetime.combine(appointmentObject.date, appointmentObject.time) 
+    minuteobject = datetime.strftime(timeobject, "%M")
+    hourobject = datetime.strftime(timeobject, "%H")
+    appointmentnotes = appointmentObject.notes
+    context = {
+        
+            'hours': hour,
+            'editDate' : dateobject,
+            'dates' : date,
+            'editMonth' : monthobject,
+            'months' : month,
+            'editYear' : yearobject,
+            'years' : year,
+            'editMinute' : minuteobject,
+            'minutes': minute,
+            'editHour' : hourobject,
+            "patients" : patient,
+            "editNotes" : appointmentnotes,
+            "pats" : Patient.objects.all().order_by('id'),
+            "prescPatients" : Appointment.objects.all().order_by('id'),
+            'form' : form
+    }
+    # appointmentObject.date = datetime.strptime((request.POST.get('EnterDate') + request.POST.get('EnterDateMonth') + request.POST.get('EnterYear')), "%m%d%Y") 
+    # appointmentObject.date = datetime.strptime(appointmentObject.date, "%m%d%Y")
+    # appointmentObject.save()
+    # return render(request,'HealthCentre/NewAppointment.html', context)
+    response = render(request,'HealthCentre/NewAppointment.html', context)
+    return responseHeadersModifier(response)
+
+def deleteappointment(request, pk):
+    request.session['deleteAppointment'] = True
+    delappointmentobj = Appointment.objects.get(id=pk)
+    delappointmentobj.delete()
+    doctor = Doctor.objects.get(emailHash = request.session['userEmail'])
+    records = doctor.doctorRecords.all()
+    context = {
+    "message" : "Successfully Logged In.",
+    "isAuthenticated" : True,
+    "user": records.order_by('-timestamp'),
+    "Appointments" : Appointment.objects.all().order_by('-date')
+        }
+    response = render(request, 'HealthCentre/appointmentsPortal.html', context)
+    return responseHeadersModifier(response)
+
+
+
 def doctorprofile(request):
      if request.method == 'GET':
         
@@ -660,6 +778,7 @@ def requestSessionInitializedChecker(request):
         request.session['writeNewPrescription'] = False
         request.session['CreatenewAppointment'] = False
         request.session['goToAppointmentsPage'] = False
+        request.session['appointmentEdit'] = False
  
     # Returning request
     return request
