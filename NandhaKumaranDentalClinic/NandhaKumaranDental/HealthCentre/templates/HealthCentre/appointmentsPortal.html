@@ -65,7 +65,7 @@ NDC-Prescription
     <table class = "prescription-table">
         <thead>
           <tr>
-            <th>  </th>
+            <!-- <th>  </th> -->
             <th>Patient Name</th>
             <th>Date</th>
           </tr>
@@ -73,15 +73,17 @@ NDC-Prescription
         <tbody>
           {% for appointment in Appointments %}    
             <tr class="prescription-row">
-                <td><button class="tree-toggle" data-prescription-id="{{ prescription.id }}">Edit</button></td>
+                
                 <!-- <div id="prescription-details-{{ prescription.id }}" class="prescription-details"></div>   -->
               <td>{{ appointment.appointmentpatient }}</td>
               <td>{{ appointment.date }}</td>
+              <td><a class="button" href ="{% url 'editAppointments' appointment.id %}">Edit</a></td>
+              <td><a class="button" href ="{% url 'deleteappointment' appointment.id %}">Delete</a></td>
             </tr>
             <tr class="prescription-details">
                 <td>Doctor Name : {{ appointment.appointmentdoctor }} </td>
                 <!-- <td>ID: {{ prescription.doctor }}</td> ID: {{ prescription.doctor }} -->
-                <td>Prescription : {{ appointment.subject }}</td>
+                <td>notes : {{ appointment.notes }}</td>
                 <td>{{ appointment.time }}</td>
                 <!-- <td>{% if prescription.isCompleted %} prescription is completed {% else %} prescription is incomplete {% endif %} </td> -->
             </tr>    

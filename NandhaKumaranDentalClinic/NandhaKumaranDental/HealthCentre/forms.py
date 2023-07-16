@@ -19,6 +19,11 @@ class AppointmentSetForm(ModelForm):
             'time' : DateTimePickerInput(),
             
         }
+
+class AppointmentForm(ModelForm):
+    class Meta:
+        model = Appointment
+        fields = "__all__"
 # class TimeInput(forms.TimeInput, forms.DateInput):
 #     timeInputType = 'time'
 #     dateinputType = 'date'

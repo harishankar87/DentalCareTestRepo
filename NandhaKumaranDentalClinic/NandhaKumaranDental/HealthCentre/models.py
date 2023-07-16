@@ -43,12 +43,13 @@ class Prescription(models.Model):
         return "\nDoctor :" + str(self.doctor) + "\n\nPatient :" + str(self.patient) + "\n\nPrescription : \n\n" + self.prescriptionText + "\n\n"
 
 class Appointment(models.Model):
-    time = models.DateTimeField(default=timezone.now)
+    time = models.TimeField(default=timezone.now)
     date = models.DateField(default=timezone.now)
     subject = models.CharField(max_length=2000)
     notes = models.TextField()
     appointmentpatient = models.CharField(max_length=2000, default = "")
     appointmentdoctor  = models.CharField(max_length=2000, default= "")
+    AppointmentTimeStamp = models.DateTimeField(auto_now_add = True)#auto_now_add = True
 
     def __str__(self):
         return "\nDoctor :" + str(self.appointmentdoctor) + "\n\nPatient" + str(self.appointmentpatient) +"\n\nDate :"+ str(self.date) + "\n\nTime :" + str(self.time) + "\n\nSubject :" + str(self.subject) + "\n\nnotes :" + str(self.notes)

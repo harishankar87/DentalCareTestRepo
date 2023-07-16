@@ -16,7 +16,9 @@ urlpatterns = [
     path('doctorprofile', views.doctorprofile, name = "doctorprofile"),
     path('doctorappointments', views.doctorappointments, name = "doctorappointments"),
     path('doctorappointmentsfalse', views.doctorappointmentsfalse, name = "doctorappointmentsfalse"),
-    # path('whatsapp-number/<int:number_id>/', views.get_whatsapp_number, name='whatsapp_number'),
+    path('editAppointments/<pk>', views.editAppointments, name = 'editAppointments'),
+    path('deleteappointment/<pk>', views.deleteappointment, name = 'deleteappointment'),
+    # path('editAppointments', views.editAppointments, name = 'editAppointments')
 ]
 
 # from django.urls import path
