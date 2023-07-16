@@ -1,6 +1,8 @@
 from django.urls import path
 
 from . import views
+# from django.urls import path
+# from .views import get_whatsapp_number
 
 urlpatterns = [
     path('', views.login, name = "index"),
@@ -13,5 +15,14 @@ urlpatterns = [
     path('onlineprescription', views.onlineprescription, name = "onlineprescription"),
     path('doctorprofile', views.doctorprofile, name = "doctorprofile"),
     path('doctorappointments', views.doctorappointments, name = "doctorappointments"),
-    path('doctorappointmentsfalse', views.doctorappointmentsfalse, name = "doctorappointmentsfalse")
+    path('doctorappointmentsfalse', views.doctorappointmentsfalse, name = "doctorappointmentsfalse"),
+    # path('whatsapp-number/<int:number_id>/', views.get_whatsapp_number, name='whatsapp_number'),
 ]
+
+# from django.urls import path
+# from your_app.views import get_whatsapp_number
+
+# urlpatterns = [
+#     # Other URL patterns...
+#     path('whatsapp-number/<int:number_id>/', get_whatsapp_number, name='whatsapp_number'),
+# ]

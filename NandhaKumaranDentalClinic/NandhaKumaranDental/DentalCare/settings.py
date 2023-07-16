@@ -129,3 +129,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+
+# WHATSAPP_API_SETTINGS = {
+#     'API_KEY': 'your_api_key',
+#     'SECRET_KEY': 'your_secret_key',
+#     'BASE_URL': 'https://api.whatsapp.com',
+# }

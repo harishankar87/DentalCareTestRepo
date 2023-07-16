@@ -8,6 +8,11 @@ from django.contrib.auth.decorators import login_required
 from .forms import AppointmentSet, AppointmentSetForm
 from datetime import datetime
 from django.utils import timezone
+from django.shortcuts import render
+from .Whatsapptestfile import whatsappApi
+
+# from Whatsapptestfile import psutil
+
 # Create your views here.
 def index(request):
     """ Function for displaying main page of website. """
@@ -662,3 +667,19 @@ def requestSessionInitializedChecker(request):
  
     # Returning request
     return request
+
+def whatsappNotification():
+    # try:
+    #     whatsapp_number = WhatsAppNumber.objects.get(id=number_id)
+    #     return render(request, 'whatsapp_number.html', {'whatsapp_number': whatsapp_number})
+    # except WhatsAppNumber.DoesNotExist:
+    #     return render(request, 'error.html', {'message': 'WhatsApp number not found'})
+
+
+    whatsappApi("+917904427507")
+
+whatsappNotification()
+    # return whatsappNotification()
+
+
+    

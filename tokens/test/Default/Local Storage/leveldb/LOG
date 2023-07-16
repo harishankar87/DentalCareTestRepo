@@ -1,0 +1,14 @@
+2023/07/16-12:22:24.482 236c Reusing MANIFEST C:\DentalCareTestRepo\tokens\test\Default\Local Storage\leveldb/MANIFEST-000001
+2023/07/16-12:22:24.483 236c Recovering log #9
+2023/07/16-12:22:24.488 236c Reusing old log C:\DentalCareTestRepo\tokens\test\Default\Local Storage\leveldb/000009.log 
+2023/07/16-12:25:25.558 2ab4 Level-0 table #13: started
+2023/07/16-12:25:25.566 2ab4 Level-0 table #13: 11982 bytes OK
+2023/07/16-12:25:25.571 2ab4 Delete type=0 #9
+2023/07/16-12:25:25.574 2ab4 Compacting 4@0 + 0@1 files
+2023/07/16-12:25:25.581 2ab4 Generated table #14@0: 85 keys, 53163 bytes
+2023/07/16-12:25:25.581 2ab4 Compacted 4@0 + 0@1 files => 53163 bytes
+2023/07/16-12:25:25.586 2ab4 compacted to: files[ 0 1 0 0 0 0 0 ]
+2023/07/16-12:25:25.587 2ab4 Delete type=2 #3
+2023/07/16-12:25:25.587 2ab4 Delete type=2 #6
+2023/07/16-12:25:25.587 2ab4 Delete type=2 #10
+2023/07/16-12:25:25.587 2ab4 Delete type=2 #13

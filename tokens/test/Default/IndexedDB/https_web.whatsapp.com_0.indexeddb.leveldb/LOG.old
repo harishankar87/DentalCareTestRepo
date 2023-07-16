@@ -1,0 +1,6 @@
+2023/07/16-01:27:55.068 4258 Reusing MANIFEST C:\DentalCareTestRepo\tokens\test\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/07/16-01:27:55.069 4258 Recovering log #173
+2023/07/16-01:27:55.215 4258 Reusing old log C:\DentalCareTestRepo\tokens\test\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000173.log 
+2023/07/16-01:28:28.969 4248 Level-0 table #181: started
+2023/07/16-01:28:29.043 4248 Level-0 table #181: 1201980 bytes OK
+2023/07/16-01:28:29.048 4248 Delete type=0 #173

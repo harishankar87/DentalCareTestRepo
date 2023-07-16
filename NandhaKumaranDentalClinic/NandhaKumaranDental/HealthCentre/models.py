@@ -3,6 +3,7 @@ from Cryptodome.Hash import SHA256
 from codecs import encode,decode
 from django.utils import timezone
 
+
 class Doctor(models.Model):
     name = models.CharField(max_length = 30)
     address = models.CharField(max_length = 100)
@@ -74,3 +75,4 @@ def emailHasher(userEmail):
     emailHash = encode(emailHash, 'hex')
     emailHash = decode(emailHash, 'utf-8')
     return emailHash
+    
