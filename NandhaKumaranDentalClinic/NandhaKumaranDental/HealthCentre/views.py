@@ -10,7 +10,7 @@ from datetime import datetime, time
 import datetime as dt
 from django.utils import timezone
 from django.shortcuts import render
-from .Whatsapptestfile import whatsappApi
+from .Whatsapptestfile import whatsappApi, openWhatsapp
 
 # from Whatsapptestfile import psutil
 
@@ -485,6 +485,7 @@ def doctorappointments(request):
             "user": records.order_by('-timestamp'),
             "Appointments" : Appointment.objects.all().order_by('-date')
         }
+        whatsappNotification()
         response = render(request, 'HealthCentre/appointmentsPortal.html', context)
         return responseHeadersModifier(response)
 
@@ -796,12 +797,21 @@ def whatsappNotification():
 
 
     whatsappApi("+917904427507")
+openWhatsapp()
 
-whatsappNotification()
-    # return whatsappNotification()
+def searchAppointments(request):
+    if request.method == "POST":
 
+        searchQuery = request.POST["searchQuery"]
 
+        searchFilterAppointments = Appointment.objects.filter(appointmentpatient__contains = searchQuery)
 
+        context = {
+            'searchAppointmentPatients' : searchFilterAppointments.order_by('appointmentpatient')
+        }
+
+        response = render(request, "HealthCentre/appointmentsPortal.html", context)
+        return responseHeadersModifier(response)
 
 
 

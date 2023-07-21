@@ -26,6 +26,21 @@ NDC-Prescription
     <li class = "button">
         <a class="button" align = "right" type ="submit" style="color:rgb(30, 126, 216)" href="{% url 'doctorappointments' %}">Create new appointment</a>
     </li> 
+    <style>
+      .search-bar {
+        position: absolute;
+        right: 0;
+      }
+    </style>
+    <!-- form-inline my-2 my-lg-0 -->
+    <form class="search-bar" method="post" action="{% url 'searchAppointments' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <input name = "searchQuery" class="form-group" type="search" placeholder="Search Appointments" aria-label="Search">
+        <button class="form-group" type="submit">Search</button>
+        <!-- btn btn-outline-success my-2 my-sm-0 -->
+      </div>
+    </form>
     {% if successPrescriptionMessage %}
         <br>
             <div style="text-align:center;margin:0 auto;"class="alert alert-warning" role="alert">
@@ -88,6 +103,23 @@ NDC-Prescription
                 <!-- <td>{% if prescription.isCompleted %} prescription is completed {% else %} prescription is incomplete {% endif %} </td> -->
             </tr>    
           {% endfor %}
+          {% for appointmentPatientsearch in searchAppointmentPatients %}
+          <tr class="prescription-row">
+                
+            <!-- <div id="prescription-details-{{ prescription.id }}" class="prescription-details"></div>   -->
+          <td>{{ appointmentPatientsearch.appointmentpatient }}</td>
+          <td>{{ appointmentPatientsearch.date }}</td>
+          <td><a class="button" href ="{% url 'editAppointments' appointmentPatientsearch.id %}">Edit</a></td>
+          <td><a class="button" href ="{% url 'deleteappointment' appointmentPatientsearch.id %}">Delete</a></td>
+        </tr>
+        <tr class="prescription-details">
+            <td>Doctor Name : {{ appointmentPatientsearch.appointmentdoctor }} </td>
+            <!-- <td>ID: {{ prescription.doctor }}</td> ID: {{ prescription.doctor }} -->
+            <td>notes : {{ appointmentPatientsearch.notes }}</td>
+            <td>{{ appointmentPatientsearch.time }}</td>
+            <!-- <td>{% if prescription.isCompleted %} prescription is completed {% else %} prescription is incomplete {% endif %} </td> -->
+        </tr>
+        {% endfor %}
         </tbody>
       </table>
       <script>
@@ -155,7 +187,7 @@ NDC-Prescription
 
       {% endif %}
     {% endif %}
-
+    
     <br>
 
     {% if message %}
