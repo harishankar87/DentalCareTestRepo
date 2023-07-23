@@ -24,7 +24,7 @@ SECRET_KEY = '2i#ra7wgn!2%2&)355v+i&dm(vv-v_a1y$=#jah_m7qi$8^706'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+USE_WHATSAPP = False
 ALLOWED_HOSTS = ['*']
 
 

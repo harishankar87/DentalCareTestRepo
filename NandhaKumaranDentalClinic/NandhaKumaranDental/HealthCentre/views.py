@@ -10,11 +10,10 @@ from datetime import datetime, time
 import datetime as dt
 from django.utils import timezone
 from django.shortcuts import render
-from .Whatsapptestfile import whatsappApi, openWhatsapp
+import sys
+if 'runserver' in sys.argv:
+    from .Whatsapptestfile import whatsappApi, openWhatsapp
 
-# from Whatsapptestfile import psutil
-
-# Create your views here.
 def index(request):
     """ Function for displaying main page of website. """
     
@@ -795,9 +794,10 @@ def whatsappNotification():
     # except WhatsAppNumber.DoesNotExist:
     #     return render(request, 'error.html', {'message': 'WhatsApp number not found'})
 
-
+    
     whatsappApi("+917904427507")
 openWhatsapp()
+
 
 def searchAppointments(request):
     if request.method == "POST":

@@ -3,79 +3,141 @@
 REM Check if Python is installed
 python --version
 IF %ERRORLEVEL% NEQ 0 (
-    REM Python is not installed, so install it
-    REM Download Python installer
-    curl -o "%USERPROFILE%\Downloads\python_installer.msi" https://www.python.org/ftp/python/<python-version>/python-<python-version>-amd64.exe
     
-    REM Wait until the download is complete
-    :wait_for_python_download
-    timeout /t 1 >nul
-    IF NOT EXIST "%USERPROFILE%\Downloads\python_installer.msi" (
-        goto wait_for_python_download
-    )
-    
-    REM Install Python
-    "%USERPROFILE%\Downloads\python_installer.msi" /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+    echo initiating python installation...
+    REM Python is not installed, so installing it....
+    set PYTHON_VERSION=3.10.5
+    set PYTHON_URL=https://www.python.org/ftp/python/%PYTHON_VERSION%/python-%PYTHON_VERSION%-amd64.exe
+    set PYTHON_INSTALLER=python-%PYTHON_VERSION%-amd64.exe
+
+    REM Downloading Python installer...
+    echo downloading python installer...
+    curl -O %PYTHON_INSTALLER% %PYTHON_URL%
+
+    echo installing python silently....
+    REM Installing Python silently (assuming default installation path)...
+    %PYTHON_INSTALLER% /passive InstallAllUsers=1 PrependPath=1
+
+    echo cleaning up python installer...
+    REM Cleaning up the installer...
+    del %PYTHON_INSTALLER%
+
+    echo Python %PYTHON_VERSION% has been installed successfully.
+) else (
+    echo python is already installed. requirement already satisfied.
 )
+
 PAUSE
-REM Check if pip is installed
-pip --version
+echo postgres check...
+postgres --version
 IF %ERRORLEVEL% NEQ 0 (
-    REM Pip is not installed, so install it
-    REM Download get-pip.py
-    curl -o "%USERPROFILE%\Downloads\get-pip.py" https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    
-    REM Install pip
-    python "%USERPROFILE%\Downloads\get-pip.py" /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+REM Define PostgreSQL version and download URL
+set PG_VERSION=15.2
+set PG_URL=https://get.enterprisedb.com/postgresql/postgresql-%PG_VERSION%-windows-x64-binaries.zip
+
+REM Define installation and data directories
+set PG_INSTALL_DIR=C:\PostgreSQL
+set PG_DATA_DIR=C:\PostgreSQL\data
+
+REM Define password for the PostgreSQL 'postgres' user
+set PG_PASSWORD=12345
+echo downloading postgres...
+REM Download PostgreSQL installer using curl
+curl -O postgresql.zip %PG_URL%
+
+echo installing postgres...
+REM Unzip the PostgreSQL binaries
+powershell -Command "Expand-Archive -Path 'postgresql.zip' -DestinationPath '%PG_INSTALL_DIR%'"
+
+REM Set up data directory
+mkdir "%PG_DATA_DIR%"
+echo initializing database cluster...
+REM Initialize the database cluster
+"%PG_INSTALL_DIR%\pgsql\bin\initdb.exe" -D "%PG_DATA_DIR%"
+
+echo starting postgres server...
+REM Start the PostgreSQL server
+"%PG_INSTALL_DIR%\pgsql\bin\pg_ctl.exe" -D "%PG_DATA_DIR%" -l logfile start
+
+REM Create a password for the 'postgres' user
+echo ALTER USER postgres WITH PASSWORD ^^^^'%PG_PASSWORD%^^^^'; | "%PG_INSTALL_DIR%\pgsql\bin\psql.exe" -U postgres
+
+echo PostgreSQL %PG_VERSION% has been installed successfully.
+) else (
+    echo postgres is already installed. requirement already satisfied.
 )
 PAUSE
-REM Check if Git is installed
-git --version
-IF %ERRORLEVEL% NEQ 0 (
-    REM Git is not installed, so install it
-    REM Download Git installer
-    curl -o "%USERPROFILE%\Downloads\git.exe" https://github.com/git-for-windows/git.git
-    
-    REM Install Git
-    "%USERPROFILE%\Downloads\git.exe" /SILENT
+
+echo cloning from https://github.com/Adhithya-Pinghley/DentalCareTestRepo.git ...
+echo archiving repository...
+REM Define the GitHub repository details
+set GITHUB_USER= Adhithya-Pinghley
+set GITHUB_REPO= DentalCareTestRepo
+set GITHUB_URL=https://github.com/Adhithya-Pinghley/DentalCareTestRepo/archive/refs/heads/Adhithya.zip
+if not exist "Dental-Software" (
+mkdir Dental-Software
+) else (
+    echo folder already exists...
 )
 PAUSE
-REM CREATE FOLDER
-echo creating folder 'Dental-Software'...
-@REM  IF NOT EXIST "C:\Dental-Software"(
-mkdir C:\Dental-Software
-echo 'Dental-Software' folder created...
+
+cd Dental-Software
+REM Define the destination folder where the repository will be extracted
+@REM set DESTINATION_FOLDER= Dental-Software
+echo downloading the repository (including dependencies)...
+REM Download the repository as a ZIP archive using curl
+if not exist "DentalCareTestRepo-Adhithya.zip" (
+curl -LJO %GITHUB_URL%
+) else (
+    echo repository archive already exists. Skipping download...
+)
 PAUSE
-cd C:\Dental-Software
-echo Entered into 'D:/Dental-Software'...
+if not exist "DentalCareTestRepo-Adhithya" (
+echo extracting repository with dependencies...
+REM Extract the contents of the ZIP archive
+powershell -command "Expand-Archive -Path 'DentalCareTestRepo-Adhithya.zip'"
+@REM -DestinationPath '%DESTINATION_FOLDER%'
+) else (
+    echo repository already extracted. Skipping extraction...
+)
 PAUSE
-REM Clone the repository
-echo Cloning the requested repository...
-git clone https://github.com/Adhithya-Pinghley/DentalCareTestRepo.git %/Dental-Software%
-echo cloning complete...
+
+echo cleaning up archives...
+REM Clean up the ZIP archive
+@REM del Adhithya.zip
+echo The GitHub repository has been downloaded and installed successfully.
+
 PAUSE
+cd DentalCareTestRepo-Adhithya\DentalCareTestRepo-Adhithya
 REM Create a virtual environment
 python -m venv .venv
+
 PAUSE
+
 echo Virtual environment created...
+
+PAUSE
+echo activating virtual environment...
+REM Set the path to the virtual environment activation script
+set VENV_PATH=.venv\Scripts\activate
+
+PAUSE
+
 REM Activate the virtual environment
-env\Scripts\activate.bat
-workon .venv
-PAUSE
-echo working on virtual environment
-REM Install dependencies
-pip install -r requirements.txt
-PAUSE
+call %VENV_PATH%
 
-REM Configure the database
-REM Update the database settings in settings.py as needed
-
+PAUSE
+cd NandhaKumaranDentalClinic\NandhaKumaranDental
+echo running database migrations...
 REM Run database migrations
+python manage.py makemigrations
 python manage.py migrate
+echo migrations created...
 PAUSE
-REM Collect static files (if applicable)
-python manage.py collectstatic --noinput
-PAUSE
+
+echo starting Django development server
 REM Start the Django development server
 python manage.py runserver
+
+echo you can now open "127.0.0.1:8000" in your browser... 
 PAUSE

@@ -1,9 +1,0 @@
-2023/07/20-10:45:29.034 3958 Reusing MANIFEST D:\Dental-Software\tokens\test\Default\Local Storage\leveldb/MANIFEST-000001
-2023/07/20-10:45:29.035 3958 Recovering log #7
-2023/07/20-10:45:29.038 3958 Reusing old log D:\Dental-Software\tokens\test\Default\Local Storage\leveldb/000007.log 
-2023/07/21-09:28:19.601 57fc Level-0 table #11: started
-2023/07/21-09:28:19.653 57fc Level-0 table #11: 11470 bytes OK
-2023/07/21-09:28:19.687 57fc Delete type=0 #7
-2023/07/21-11:10:58.623 57fc Level-0 table #13: started
-2023/07/21-11:10:58.674 57fc Level-0 table #13: 9717 bytes OK
-2023/07/21-11:10:58.708 57fc Delete type=0 #10
