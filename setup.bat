@@ -43,6 +43,7 @@ REM Define password for the PostgreSQL 'postgres' user
 set PG_PASSWORD=12345
 echo downloading postgres...
 REM Download PostgreSQL installer using curl
+PAUSE
 curl -O postgresql.zip %PG_URL%
 
 echo installing postgres...
